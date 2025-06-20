@@ -148,5 +148,4 @@ This project is open-source and available under the [MIT License](LICENSE).
 
 Made with ❤️ by Shreyas Pathe(https://github.com/ShreyasPathe)
 Feel free to contribute or raise issues!
-
 ```
