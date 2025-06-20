@@ -1,8 +1,3 @@
-Here's a complete `README.md` file for your **AI Finance Platform** project built with **Next.js, Supabase, Prisma, Tailwind, Inngest, ArcJet, Shadcn UI**, and more. This includes setup instructions, a `.env` guide, credits to the YouTube tutorial, and a placeholder for your live demo link.
-
----
-
-````md
 # 💸 Full Stack AI Finance Platform with Next.js, Supabase, Prisma, TailwindCSS, Inngest, ArcJet, Shadcn UI 🚀
 
 This is a modern **full-stack finance dashboard platform** built using cutting-edge tools like **Next.js 15**, **Supabase**, **Prisma**, **TailwindCSS**, **Inngest**, **ArcJet**, and **Shadcn UI** — with integrated **AI features** powered by Google's Gemini API.
