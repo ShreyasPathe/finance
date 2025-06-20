@@ -18,18 +18,19 @@ const serializeTransaction = (obj) => {
 };
 
 export async function getUserAccounts() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
   try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) {
+      console.warn("No user found with clerkUserId", userId);
+      return []; // Prevent crash
+    }
+
     const accounts = await db.account.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
@@ -42,12 +43,10 @@ export async function getUserAccounts() {
       },
     });
 
-    // Serialize accounts before sending to client
-    const serializedAccounts = accounts.map(serializeTransaction);
-
-    return serializedAccounts;
+    return accounts.map(serializeTransaction);
   } catch (error) {
-    console.error(error.message);
+    console.error("getUserAccounts failed:", error);
+    return []; // Return safe fallback
   }
 }
 
