@@ -44,6 +44,26 @@ function useCountUp(target, duration = 1500) {
   return count;
 }
 
+// AnimatedStat component for stats
+function AnimatedStat({ value, label }) {
+  const isAnimatable = /^\d+[KMB]?\+?$/.test(value);
+  const numericValue = isAnimatable
+    ? parseInt(value.replace(/[^\d]/g, ""), 10)
+    : 0; // Always provide a number for useCountUp
+  const countUp = useCountUp(numericValue);
+  const displayValue = isAnimatable
+    ? `${countUp}${value.replace(/\d+/g, "")}`
+    : value;
+  return (
+    <div className="text-center">
+      <div className="text-4xl font-bold text-blue-600 mb-2">
+        {displayValue}
+      </div>
+      <div className="text-gray-600">{label}</div>
+    </div>
+  );
+}
+
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white">
@@ -54,24 +74,9 @@ const LandingPage = () => {
       <section className="py-20 bg-blue-50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {statsData.map((stat, index) => {
-              // Only animate if value is a number (e.g. 50K+), not a percent or rating
-              const isAnimatable = /^\d+[KMB]?\+?$/.test(stat.value);
-              const numericValue = isAnimatable
-                ? parseInt(stat.value.replace(/[^\d]/g, ""), 10)
-                : stat.value;
-              const displayValue = isAnimatable
-                ? `${useCountUp(numericValue)}${stat.value.replace(/\d+/g, "")}`
-                : stat.value;
-              return (
-                <div key={index} className="text-center">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">
-                    {displayValue}
-                  </div>
-                  <div className="text-gray-600">{stat.label}</div>
-                </div>
-              );
-            })}
+            {statsData.map((stat, index) => (
+              <AnimatedStat key={index} value={stat.value} label={stat.label} />
+            ))}
           </div>
         </div>
       </section>
