@@ -21,8 +21,8 @@ Thanks to the creator for this incredible content!
 
 ## 🔗 Live Demo
 
-🚧 **Coming soon...**  
-*(Deploy to Vercel/Netlify and update this link)*
+**https://www.financeai64.xyz/**  
+
 
 ---
 

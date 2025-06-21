@@ -45,9 +45,8 @@ export default createMiddleware(aj, clerk);
 
 export const config = {
   matcher: [
-    "/dashboard(.*)",
-    "/account(.*)",
-    "/transaction(.*)",
-    "/api/(.*)",
+
+     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2)).*)",
+    
   ],
 };
