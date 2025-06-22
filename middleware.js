@@ -1,15 +1,15 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import arcjet, { createMiddleware, detectBot, shield } from "@arcjet/next";
+import arcjet, { detectBot, shield } from "@arcjet/next";
 
-// 1. Protected routes where auth is required
+// Define protected routes
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/account(.*)",
   "/transaction(.*)",
 ]);
 
-// 2. Clerk middleware - handles authentication
+// Clerk authentication middleware
 const clerkAuthMiddleware = clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
 
@@ -21,7 +21,7 @@ const clerkAuthMiddleware = clerkMiddleware(async (auth, req) => {
   return NextResponse.next();
 });
 
-// 3. Arcjet middleware - handles security
+// Arcjet middleware
 const arcjetMiddleware = arcjet({
   key: process.env.ARCJET_KEY,
   rules: [
@@ -33,17 +33,20 @@ const arcjetMiddleware = arcjet({
   ],
 });
 
-// 4. Compose them: Arcjet runs first, then Clerk
-export default async function middleware(req) {
-  const arcjetRes = await arcjetMiddleware(req);
-  if (arcjetRes) return arcjetRes;
+// Main middleware function
+export async function middleware(req) {
+  // Arcjet: security checks
+  const arcjetResult = await arcjetMiddleware(req);
+  if (arcjetResult) return arcjetResult;
 
-  return clerkAuthMiddleware(req);
+  // Clerk: auth checks
+  const clerkResult = await clerkAuthMiddleware(req);
+  return clerkResult ?? NextResponse.next(); // ✅ always return a valid response
 }
 
+// Ensure it runs only on the correct paths
 export const config = {
   matcher: [
-    // Everything except static/_next files
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
