@@ -1,5 +1,5 @@
 "use server";
-
+import { checkUser } from "@/lib/checkUser";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -46,11 +46,8 @@ export async function createTransaction(data) {
       throw new Error("Request blocked");
     }
 
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
-    if (!user) {
+    const user = await checkUser();
+        if (!user) {
       throw new Error("User not found");
     }
 
@@ -103,10 +100,7 @@ export async function getTransaction(id) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
+  const user = await checkUser();
   if (!user) throw new Error("User not found");
 
   const transaction = await db.transaction.findUnique({
@@ -126,10 +120,7 @@ export async function updateTransaction(id, data) {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
+    const user = await checkUser();
     if (!user) throw new Error("User not found");
 
     // Get original transaction to calculate balance change
@@ -200,13 +191,8 @@ export async function getUserTransactions(query = {}) {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const user = await checkUser();
+    if (!user) throw new Error("User not found");
 
     const transactions = await db.transaction.findMany({
       where: {

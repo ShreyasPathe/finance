@@ -1,5 +1,5 @@
 "use server";
-
+import { checkUser } from "@/lib/checkUser";
 import aj from "@/lib/arcjet";
 import { db } from "@/lib/prisma";
 import { request } from "@arcjet/next";
@@ -22,14 +22,10 @@ export async function getUserAccounts() {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
+    const user = await checkUser();
+    if (!user) throw new Error("User not found");
 
-    if (!user) {
-      console.warn("No user found with clerkUserId", userId);
-      return []; // Prevent crash
-    }
+    
 
     const accounts = await db.account.findMany({
       where: { userId: user.id },
@@ -137,13 +133,8 @@ export async function getDashboardData() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await checkUser();
+  if (!user) throw new Error("User not found");
 
   // Get all user transactions
   const transactions = await db.transaction.findMany({
